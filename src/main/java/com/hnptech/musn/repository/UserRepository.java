@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByProviderId(String providerId);
+    boolean existsByProviderIdAndProvider(String providerId, String provider);
 }

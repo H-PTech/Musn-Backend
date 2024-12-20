@@ -1,12 +1,14 @@
 package com.hnptech.musn.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isPush;
+
+    @Column(nullable = false)
+    private String name;
 }

@@ -1,5 +1,6 @@
 package com.hnptech.musn.config;
 
+import com.hnptech.musn.handler.AppleOAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private AppleOAuth2AuthenticationSuccessHandler appleOAuth2AuthenticationSuccessHandler;
+
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigrationSource()))
@@ -40,7 +43,7 @@ public class WebSecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .oauth2Login(
-                        request -> request.defaultSuccessUrl("/main")
+                        request -> request.successHandler(appleOAuth2AuthenticationSuccessHandler).defaultSuccessUrl("/main")
                 )
                 .exceptionHandling(exception -> exception.accessDeniedPage("/403"));
 
