@@ -13,3 +13,60 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      exprire-time: ${REDIS_EXPIRE_TIME}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+          kakao:
+            client-authentication-method: client_secret_post
+            client-name: kakao
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            provider: kakao
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            scope:
+          apple:
+            client-id: ${APPLE_CLIENT_ID}
+            client-secret: ${APPLE_CLIENT_SECRET}
+            authorization-grant-type: "authorization_code"
+            redirect-uri: http://localhost:8080/login/oauth2/code/apple
+            scope:
+              - openid
+              - email
+              - name
+            client-name: "Apple"
+            client-authentication-method: "client_secret_post"
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+          apple:
+            authorizationUri: "https://appleid.apple.com/auth/authorize?response_mode=form_post"
+            tokenUri: "https://appleid.apple.com/auth/token"
+            jwkSetUri: "https://appleid.apple.com/auth/keys"
+            user-name-attribute: "sub"
+
+# 새로운 클라이언트 시크릿 생성에 필요한 정보
+apple:
+  key-id: ${APPLE_KEY_ID}
+  team-id: ${APPLE_TEAM_ID}
+
+jwt:
+  token:
+    secret-key: ${JWT_SECRET_KEY}
+    access-expire-time: ${JWT_ACCESS_EXPIRE_TIME}
+    refresh-expire-time: ${JWT_REFRESH_EXPIRE_TIME}

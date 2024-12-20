@@ -36,7 +36,7 @@ public class AppleOAuth2AuthenticationSuccessHandler implements AuthenticationSu
             User newUser = User.builder()
                     .providerId(email)
                     .provider("apple")
-                    .name(name)
+//                    .name(name)
                     .nickname(nicknameGenerator.generateNickname())
                     .build();
             userRepository.save(newUser);

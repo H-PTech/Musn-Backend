@@ -59,15 +59,15 @@ public class AppleSecretGenerator {
             );
             var now = System.currentTimeMillis();
             var builder = Jwts.builder();
-            builder.header().add(tokenHeader()) // 3
-                    .and();
-            builder.signWith(privateKey) // 4
-                    .issuer(teamId)
-                    .issuedAt(new Date(now))
-                    .expiration(new Date(now + 10 * MINUTE))
-                    .subject(clientId)
-                    .audience().add(AUDIENCE)
-                    .and();
+//            builder.header().add(tokenHeader()) // 3
+//                    .and();
+//            builder.signWith(privateKey) // 4
+//                    .issuer(teamId)
+//                    .issuedAt(new Date(now))
+//                    .expiration(new Date(now + 10 * MINUTE))
+//                    .subject(clientId)
+//                    .audience().add(AUDIENCE)
+//                    .and();
             return builder.compact(); // 5
         } catch (IOException e) {
             throw new RuntimeException(e);
