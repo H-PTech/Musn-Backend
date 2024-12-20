@@ -19,8 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static org.springframework.security.core.authority.AuthorityUtils.createAuthorityList;
-
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -30,29 +28,21 @@ public class JwtFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
     String bearerToken = request.getHeader("Authorization");
-    try {
 
-      if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-        String token = bearerToken.substring(7);
-        User user;
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+      String token = bearerToken.substring(7);
+      User user;
 
-        if (jwtUtil.validateToken(token)) {
-          user = userRepository.findByIdAndDeleted(jwtUtil.getId(token), false).orElseThrow(() -> new UnauthorizedException("Invalid token"));
-          OAuth2User oAuth2User = new CustomUserDetails(user);
+      if (jwtUtil.validateToken(token)) {
+        user = userRepository.findByIdAndDeleted(jwtUtil.getId(token), false).orElseThrow(() -> new UnauthorizedException("Invalid token"));
+        OAuth2User oAuth2User = new CustomUserDetails(user);
 //        Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, oAuth2User.getAuthorities(), user.getProvider());
-          Authentication authentication = new UsernamePasswordAuthenticationToken(oAuth2User, "", oAuth2User.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(oAuth2User, "", oAuth2User.getAuthorities());
 
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
       }
-
-      filterChain.doFilter(request, response);
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("application/json");
-      response.setCharacterEncoding("UTF-8");
-      response.getWriter().write("유효하지 않은 토큰");
     }
+
+    filterChain.doFilter(request, response);
   }
 }

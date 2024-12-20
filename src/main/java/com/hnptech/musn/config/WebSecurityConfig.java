@@ -58,7 +58,7 @@ public class WebSecurityConfig {
         .exceptionHandling(exception -> exception
             // 인증되지 않은 사용자 처리 (401)
             .authenticationEntryPoint((request, response, authException) -> {
-              response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403 응답
+              response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 403 응답
               response.getWriter().write("Access Denied");
             })
         )

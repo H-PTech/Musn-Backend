@@ -25,6 +25,7 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: https://musn.shop/login/oauth2/code/google
             scope:
               - email
               - profile
@@ -35,13 +36,13 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             provider: kakao
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: https://musn.shop/login/oauth2/code/kakao
             scope:
           apple:
             client-id: ${APPLE_CLIENT_ID}
             client-secret: ${APPLE_CLIENT_SECRET}
             authorization-grant-type: "authorization_code"
-            redirect-uri: http://localhost:8080/login/oauth2/code/apple
+            redirect-uri: https://musn.shop/login/oauth2/code/apple
             scope:
               - openid
               - email

@@ -31,13 +31,13 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
     queryParams.add("accessToken", accessToken);
     queryParams.add("refreshToken", refreshToken);
 
-    URI uri = UriComponentsBuilder
-        .fromUriString("http://localhost:3000")
-        .queryParams(queryParams)
-        .build()
-        .toUri();
+//    URI uri = UriComponentsBuilder
+//        .fromUriString("http://localhost:3000")
+//        .queryParams(queryParams)
+//        .build()
+//        .toUri();
     response.setContentType("application/json");
-    response.getWriter().write("{\"accessToken\":\" Bearer " + accessToken + "\",\"refreshToken\":\"" + refreshToken + "\"}");
+    response.getWriter().write("{\"accessToken\":\"" + accessToken + "\",\"refreshToken\":\"" + refreshToken + "\"}");
 //    getRedirectStrategy().sendRedirect(request, response, uri.toString());
   }
 }
