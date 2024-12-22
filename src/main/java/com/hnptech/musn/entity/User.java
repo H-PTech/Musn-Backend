@@ -10,6 +10,11 @@ import lombok.*;
 @Setter
 @ToString
 @NoArgsConstructor
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"provider", "provider_id"})
+    }
+)
 public class User extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +23,7 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String provider;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String providerId;
 
   @Column(nullable = false)
