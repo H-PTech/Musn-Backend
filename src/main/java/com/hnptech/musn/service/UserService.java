@@ -19,4 +19,9 @@ public class UserService {
     user.setNickname(nickname);
     userRepository.save(user);
   }
+
+  public void updatePushStatus(User user, boolean isPush) {
+    user.setPush(isPush);
+    userRepository.save(user);
+  }
 }
