@@ -1,6 +1,7 @@
 package com.hnptech.musn.controller;
 
 import com.hnptech.musn.config.CustomUserDetails;
+import com.hnptech.musn.entity.dto.MypageUpdateNicknameReqDto;
 import com.hnptech.musn.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,13 @@ public class MypageController {
 
   @GetMapping
   public ResponseEntity<?> getUserById(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    return ResponseEntity.ok(userService.getUserById(customUserDetails.getUser().getId()));
+    return ResponseEntity.ok(customUserDetails.getUser().getId());
+  }
+
+  @PatchMapping
+  public ResponseEntity<?> updateNickname(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                          @RequestBody MypageUpdateNicknameReqDto dto) {
+    userService.updateNickName(customUserDetails.getUser(), dto.getNickname());
+    return ResponseEntity.ok().build();
   }
 }
