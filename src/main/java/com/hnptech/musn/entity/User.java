@@ -1,5 +1,6 @@
 package com.hnptech.musn.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hnptech.musn.entity.enums.StreamingApp;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,6 +28,7 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private StreamingApp streamingApp;
 
+  @JsonProperty("isPush")
   @Column(nullable = false)
   private boolean isPush;
 
