@@ -2,46 +2,26 @@ package com.hnptech.musn.service;
 
 import com.hnptech.musn.entity.User;
 import com.hnptech.musn.repository.UserRepository;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
-    private UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-    public User getUserByProviderId(String providerId) {
-        return userRepository.findByProviderId(providerId);
-    }
-    public User updatePush(User userDetails) {
-        User user = userRepository.findByProviderId(userDetails.getProviderId());
-        if(user != null) {
-            user.setPush(userDetails.isPush());
-        } else {
-            throw new RuntimeException("User not found");
-        }
-        return userRepository.save(user);
-    }
+  public void updateNickName(User user, String nickname) {
+    userRepository.findByNickname(nickname)
+        .ifPresent(u -> {throw new DataIntegrityViolationException("이미 사용중인 닉네임입니다.");});
 
-    public User updateNickName(User userDetails) {
-        User user = userRepository.findByProviderId(userDetails.getProviderId());
-        if(user != null) {
-            user.setNickname(userDetails.getNickname());
-        } else {
-            throw new RuntimeException("User not found");
-        }
-        return userRepository.save(user);
-    }
+    user.setNickname(nickname);
+    userRepository.save(user);
+  }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
+  public void updatePushStatus(User user, boolean isPush) {
+    user.setPush(isPush);
+    userRepository.save(user);
+  }
 }

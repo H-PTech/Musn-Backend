@@ -1,5 +1,6 @@
 package com.hnptech.musn.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hnptech.musn.entity.enums.StreamingApp;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +10,11 @@ import lombok.*;
 @Setter
 @ToString
 @NoArgsConstructor
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"provider", "provider_id"})
+    }
+)
 public class User extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,16 +23,17 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String provider;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   private String providerId;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String nickname;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private StreamingApp streamingApp;
 
+  @JsonProperty("isPush")
   @Column(nullable = false)
   private boolean isPush;
 
