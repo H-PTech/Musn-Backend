@@ -33,7 +33,7 @@ public class UserService {
     return userRepository.findByNicknameContains(Nickname);
   }
 
-  public UserDto getUserById(Long userId) {
-    return new UserDto(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다.")));
+  public User getUserById(Long userId) {
+    return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
   }
 }

@@ -1,6 +1,7 @@
 package com.hnptech.musn.controller;
 
 import com.hnptech.musn.config.CustomUserDetails;
+import com.hnptech.musn.entity.dto.UserDto;
 import com.hnptech.musn.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,6 @@ public class UserController {
 
   @GetMapping("/{userId}")
   public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable Long userId) {
-    return ResponseEntity.ok(userService.getUserById(userId));
+    return ResponseEntity.ok(new UserDto(userService.getUserById(userId)));
   }
 }
