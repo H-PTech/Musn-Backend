@@ -5,6 +5,9 @@ import com.hnptech.musn.entity.enums.StreamingApp;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -36,6 +39,9 @@ public class User extends BaseEntity {
   @JsonProperty("isPush")
   @Column(nullable = false)
   private boolean isPush;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Friendship> friends = new ArrayList<>();
 
   @Builder
   public User(String provider, String providerId, String nickname, StreamingApp streamingApp, boolean isPush) {

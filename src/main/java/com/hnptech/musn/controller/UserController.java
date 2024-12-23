@@ -5,6 +5,7 @@ import com.hnptech.musn.entity.dto.UserDto;
 import com.hnptech.musn.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +24,13 @@ public class UserController {
   @GetMapping("/{userId}")
   public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable Long userId) {
     return ResponseEntity.ok(new UserDto(userService.getUserById(userId)));
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  @PostMapping("/{userId}/friends/requests")
+  public ResponseEntity<?> sendFriendRequest(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                             @PathVariable Long userId) {
+    userService.sendFriendRequest(customUserDetails.getUser(), userId);
+    return ResponseEntity.ok().build();
   }
 }
