@@ -1,10 +1,13 @@
 package com.hnptech.musn.service;
 
 import com.hnptech.musn.entity.User;
+import com.hnptech.musn.entity.dto.UserDto;
 import com.hnptech.musn.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -23,5 +26,9 @@ public class UserService {
   public void updatePushStatus(User user, boolean isPush) {
     user.setPush(isPush);
     userRepository.save(user);
+  }
+
+  public List<UserDto> getUserByNickname(String Nickname) {
+    return userRepository.findByNicknameContains(Nickname);
   }
 }

@@ -3,11 +3,13 @@ package com.hnptech.musn.entity.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hnptech.musn.entity.User;
 import com.hnptech.musn.entity.enums.StreamingApp;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class UserDto {
   private Long id;
 
