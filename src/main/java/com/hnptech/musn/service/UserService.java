@@ -2,6 +2,7 @@ package com.hnptech.musn.service;
 
 import com.hnptech.musn.entity.User;
 import com.hnptech.musn.entity.dto.UserDto;
+import com.hnptech.musn.exception.NotFoundException;
 import com.hnptech.musn.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,5 +31,9 @@ public class UserService {
 
   public List<UserDto> getUserByNickname(String Nickname) {
     return userRepository.findByNicknameContains(Nickname);
+  }
+
+  public UserDto getUserById(Long userId) {
+    return new UserDto(userRepository.findById(userId).orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다.")));
   }
 }
