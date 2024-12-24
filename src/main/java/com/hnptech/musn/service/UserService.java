@@ -4,6 +4,7 @@ import com.hnptech.musn.entity.Friendship;
 import com.hnptech.musn.entity.User;
 import com.hnptech.musn.entity.dto.UserDto;
 import com.hnptech.musn.entity.enums.FriendshipStatus;
+import com.hnptech.musn.exception.BadRequestException;
 import com.hnptech.musn.exception.NotFoundException;
 import com.hnptech.musn.repository.FriendshipRepository;
 import com.hnptech.musn.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -43,6 +45,11 @@ public class UserService {
 
   public void sendFriendRequest(User user, Long userId) {
     User friend = this.getUserById(userId);
+
+    // 본인에게 친구요청 시
+    if (Objects.equals(user.getId(), friend.getId())) {
+      throw new BadRequestException("본인에게 친구 요청 불가");
+    }
 
     if (friendshipRepository.findByUserAndFriend(user, friend).isPresent()
         || friendshipRepository.findByUserAndFriend(friend, user).isPresent()) {
