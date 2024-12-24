@@ -1,9 +1,11 @@
 package com.hnptech.musn.controller;
 
 import com.hnptech.musn.config.CustomUserDetails;
+import com.hnptech.musn.entity.dto.FriendshipUpdateRequest;
 import com.hnptech.musn.entity.dto.NicknameUpdateRequest;
 import com.hnptech.musn.entity.dto.PushUpdateRequest;
 import com.hnptech.musn.entity.dto.UserDto;
+import com.hnptech.musn.entity.enums.FriendshipStatus;
 import com.hnptech.musn.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,26 @@ public class MypageController {
 
   @PatchMapping("/push")
   public ResponseEntity<?> updatePushStatus(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                          @RequestBody PushUpdateRequest dto) {
+                                            @RequestBody PushUpdateRequest dto) {
     userService.updatePushStatus(customUserDetails.getUser(), dto.isPush());
+    return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/friends")
+  public ResponseEntity<?> getFriends(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.ok(userService.findByUserAndStatus(customUserDetails.getUser(), FriendshipStatus.ACCEPTED));
+  }
+
+  @GetMapping("/friends/requests")
+  public ResponseEntity<?> getFriendRequests(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    return ResponseEntity.ok(userService.findByUserAndStatus(customUserDetails.getUser(), FriendshipStatus.REQUESTED));
+  }
+
+  @PatchMapping("/friends/requests/{requestId}")
+  public ResponseEntity<?> updateFriendshipStatus(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                  @PathVariable Long requestId,
+                                                  @RequestBody FriendshipUpdateRequest dto) {
+    userService.updateFriendshipStatus(customUserDetails.getUser(), requestId, dto.getStatus());
     return ResponseEntity.ok().build();
   }
 }

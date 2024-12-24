@@ -5,6 +5,7 @@ import com.hnptech.musn.entity.User;
 import com.hnptech.musn.entity.dto.UserDto;
 import com.hnptech.musn.entity.enums.FriendshipStatus;
 import com.hnptech.musn.exception.BadRequestException;
+import com.hnptech.musn.exception.ForbiddenException;
 import com.hnptech.musn.exception.NotFoundException;
 import com.hnptech.musn.repository.FriendshipRepository;
 import com.hnptech.musn.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,7 +26,9 @@ public class UserService {
 
   public void updateNickName(User user, String nickname) {
     userRepository.findByNickname(nickname)
-        .ifPresent(u -> {throw new DataIntegrityViolationException("이미 사용중인 닉네임입니다.");});
+        .ifPresent(u -> {
+          throw new DataIntegrityViolationException("이미 사용중인 닉네임입니다.");
+        });
 
     user.setNickname(nickname);
     userRepository.save(user);
@@ -70,5 +74,24 @@ public class UserService {
 
     friendshipRepository.save(friendship1);
     friendshipRepository.save(friendship2);
+  }
+
+  public List<UserDto> findByUserAndStatus(User user, FriendshipStatus status) {
+    List<Friendship> friendships = friendshipRepository.findByUserAndStatus(user, status);
+    return friendships.stream()
+        .map(friendship -> new UserDto(friendship.getFriend()))
+        .collect(Collectors.toList());
+  }
+
+  public void updateFriendshipStatus(User user, Long requestId, FriendshipStatus status) {
+    Friendship friendship = friendshipRepository.findById(requestId).orElseThrow(() -> new BadRequestException("잘못된 요청입니다."));
+
+    if (friendship.getStatus() != FriendshipStatus.REQUESTED
+        || !user.getId().equals(friendship.getUser().getId())) {
+      throw new ForbiddenException("권한이 없습니다.");
+    }
+
+    friendship.setStatus(status);
+    friendshipRepository.save(friendship);
   }
 }
