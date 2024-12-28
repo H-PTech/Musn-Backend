@@ -23,7 +23,6 @@ public class OAuth2MemberSuccessHandler extends SimpleUrlAuthenticationSuccessHa
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
     MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 
-    System.out.println(authentication);
     String accessToken = jwtUtil.createAccessToken(authentication);
     String refreshToken = jwtUtil.createRefreshToken(authentication);
     jwtUtil.saveRefreshToken(authentication.getName(), refreshToken);
