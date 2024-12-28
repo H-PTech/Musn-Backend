@@ -61,6 +61,7 @@ public class UserService {
       throw new DataIntegrityViolationException("이미 친구 요청을 보냈습니다.");
     }
 
+    //todo 요청 시에 양쪽에 관계를 만들면 요청 조회 시 친구에게 요청을 보냈지만 나도 조회 및 응답 가능
     Friendship friendship1 = Friendship.builder()
         .user(user)
         .friend(friend)

@@ -31,7 +31,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     return new CustomUserDetails(user, attributes);
   }
 
-  private User getOrSave(String provider, String providerId) {
+  public User getOrSave(String provider, String providerId) {
     Optional<User> user = userRepository.findByProviderAndProviderId(provider, providerId);
 
     if (user.isEmpty()) {

@@ -9,7 +9,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -71,3 +71,8 @@ jwt:
     secret-key: ${JWT_SECRET_KEY}
     access-expire-time: ${JWT_ACCESS_EXPIRE_TIME}
     refresh-expire-time: ${JWT_REFRESH_EXPIRE_TIME}
+
+social:
+  provider:
+    kakao:
+      app-id: ${KAKAO_APP_ID}
