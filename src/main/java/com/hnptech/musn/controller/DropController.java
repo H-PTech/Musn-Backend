@@ -136,8 +136,8 @@ public class DropController {
 
   // 드랍 좋아요 취소
   @DeleteMapping("/{dropId}/like")
-  public ResponseEntity<?> deleteLike(@PathVariable long dropId) {
-    long userId = 1;
+  public ResponseEntity<?> deleteLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
+    long userId = customUserDetails.getUser().getId();
     dropService.deleteLike(userId, dropId);
     return ResponseEntity.ok("success");
   }
