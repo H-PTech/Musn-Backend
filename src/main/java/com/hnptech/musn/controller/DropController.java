@@ -5,6 +5,7 @@ import com.hnptech.musn.entity.MusicDrop;
 import com.hnptech.musn.entity.dto.MusicAndVideoCount;
 import com.hnptech.musn.service.DropService;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +24,33 @@ public class DropController {
   public void test() {
     MusicDrop drop = new MusicDrop();
     drop.setCode("ss");
-    float a = 123;
-    drop.setLng(a);
-    drop.setLat(a);
+    float lat = 37.5755F;
+    float lng = 126.9780F;
+    drop.setLng(lng);
+    drop.setLat(lat);
     drop.setContent("ss");
     drop.setUserId(1L);
     drop.setViews(0);
     drop.setLikeCount(0);
     drop.setType(1);
+    dropService.save(drop);
 
+    lat = 37.5575F;
+    lng = 126.9780F;
+    drop.setLng(lng);
+    drop.setLat(lat);
+    dropService.save(drop);
+
+    lat = 37.5665F;
+    lng = 126.9885F;
+    drop.setLng(lng);
+    drop.setLat(lat);
+    dropService.save(drop);
+
+    lat = 37.5665F;
+    lng = 126.9675F;
+    drop.setLng(lng);
+    drop.setLat(lat);
     dropService.save(drop);
   }
 
@@ -40,17 +59,30 @@ public class DropController {
     return ResponseEntity.ok(dropService.findAll());
   }
 
+  @GetMapping("/music")
+  public ResponseEntity<?> getDropMusic(@RequestParam(defaultValue = "37.5") Float lat,
+                                        @RequestParam(defaultValue = "126.95") Float lng,
+                                        @RequestParam(defaultValue = "1.0") Float radius) {
+    // 음악 drop만 리턴
+    return ResponseEntity.ok(dropService.getDropListByType(lat, lng, radius, 1));
+  }
+  @GetMapping("/video")
+  public ResponseEntity<?> getDropVideo(@RequestParam(defaultValue = "37.5") Float lat,
+                                        @RequestParam(defaultValue = "126.95") Float lng,
+                                        @RequestParam(defaultValue = "1.0") Float radius) {
+    // 영상 drop만 리턴
+    return ResponseEntity.ok(dropService.getDropListByType(lat, lng, radius, 2));
+  }
+
   @GetMapping
   public ResponseEntity<?> getDropList(
-          @RequestParam(defaultValue = "37.5") Float neLat,
-          @RequestParam(defaultValue = "126.95") Float neLng,
-          @RequestParam(defaultValue = "37.6") Float swLat,
-          @RequestParam(defaultValue = "127") Float swLng) {
-    System.out.println("swLat: " + swLat);
-    System.out.println("neLat: " + neLat);
-    System.out.println("swLng: " + swLng);
-    System.out.println("neLng: " + neLng);
-    List<MusicDrop> drops = dropService.getDropList(swLat, neLat, swLng, neLng);
+          @RequestParam(defaultValue = "37.5665") Float lat,
+          @RequestParam(defaultValue = "126.9780") Float lng,
+          @RequestParam(defaultValue = "1.0") Float radius) { // 반경 기본값: 1km
+    System.out.println("lat: " + lat);
+    System.out.println("lng: " + lng);
+    System.out.println("radius: " + radius);
+    List<MusicDrop> drops = dropService.getDropList(lat, lng, radius);
     return ResponseEntity.ok(drops);
   }
 
@@ -58,34 +90,30 @@ public class DropController {
   //지도 범위 내 드랍 조회(거리 순)
   @GetMapping("/{userLat}/{userLng}")
   public ResponseEntity<?> getDropListByDistance(
-          @RequestParam(defaultValue = "37.5") float neLat,
-          @RequestParam(defaultValue = "126.95") float neLng,
-          @RequestParam(defaultValue = "37.6") float swLat,
-          @RequestParam(defaultValue = "127") float swLng,
-          // 현재 위치
-          @PathVariable(value = "userLat") float userLat,
-          @PathVariable(value = "userLng") float userLng) {
-    List<MusicDrop> drops = dropService.getDropListByDistance(swLat, neLat, swLng, neLng, userLat, userLng);
+          @RequestParam(defaultValue = "37.5") Float lat,
+          @RequestParam(defaultValue = "126.95") Float lng,
+          @RequestParam(defaultValue = "1.0") Float radius) {
+    List<MusicDrop> drops = dropService.getDropListByDistance(lat, lng, radius);
     return ResponseEntity.ok(drops);
   }
 
   // 지도 범위 내 드랍 총 개수 조회
   @GetMapping("/count/all")
-  public ResponseEntity<?> getDropListCount(@RequestParam(defaultValue = "37.5") float neLat,
-                                            @RequestParam(defaultValue = "126.95") float neLng,
-                                            @RequestParam(defaultValue = "37.6") float swLat,
-                                            @RequestParam(defaultValue = "127") float swLng) {
-    int count = dropService.getDropCount(swLat, neLat, swLng, neLng);
+  public ResponseEntity<?> getDropListCount(
+          @RequestParam(defaultValue = "37.5") Float lat,
+          @RequestParam(defaultValue = "126.95") Float lng,
+          @RequestParam(defaultValue = "1.0") Float radius) {
+    int count = dropService.getDropCount(lat, lng, radius);
     return ResponseEntity.ok(count);
   }
 
   // 지도 범위 내 뮤직&비디오 개수 조회
   @GetMapping("/count")
-  public ResponseEntity<?> getMusicAndVideoCount(@RequestParam(defaultValue = "37.5") float neLat,
-                                                 @RequestParam(defaultValue = "126.95") float neLng,
-                                                 @RequestParam(defaultValue = "37.6") float swLat,
-                                                 @RequestParam(defaultValue = "127") float swLng) {
-    MusicAndVideoCount result = dropService.getMusicAndVideoCount(swLat, neLat, swLng, neLng);
+  public ResponseEntity<?> getMusicAndVideoCount(
+          @RequestParam(defaultValue = "37.5") Float lat,
+          @RequestParam(defaultValue = "126.95") Float lng,
+          @RequestParam(defaultValue = "1.0") Float radius) {
+    MusicAndVideoCount result = dropService.getMusicAndVideoCount(lat, lng, radius);
     return ResponseEntity.ok(result);
   }
 

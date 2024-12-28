@@ -10,15 +10,46 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface DropRepository extends JpaRepository<MusicDrop, Long> {
-  List<MusicDrop> findAllByLatBetweenAndLngBetween(float swLat, float neLat, float swLng, float neLng);
+  @Query(value = "SELECT * FROM music_drop WHERE " +
+          "(6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) <= :radius",
+          nativeQuery = true)
+  List<MusicDrop> findAllWithinRadius(@Param("lat") float lat,
+                                      @Param("lng") float lng,
+                                      @Param("radius") float radius);
 
-  int countByLatBetweenAndLngBetween(float swLat, float neLat, float swLng, float neLng);
-  int countByLatBetweenAndLngBetweenAndType(float swLat, float neLat, float swLng, float neLng,int type);
+  @Query(value = "SELECT * FROM music_drop WHERE " +
+          "(6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) <= :radius and type = :type",
+          nativeQuery = true)
+  List<MusicDrop> findAllWithinRadiusByType(@Param("lat") float lat,
+                                            @Param("lng") float lng,
+                                            @Param("radius") float radius,
+                                            @Param("type") int type);
+
+
+  @Query(value = "SELECT count(*) FROM music_drop WHERE " +
+          "(6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) <= :radius",
+          nativeQuery = true)
+  int countByLatBetweenAndLngBetween(@Param("lat") float lat,
+                                     @Param("lng") float lng,
+                                     @Param("radius") float radius);
+
+
+  @Query(value = "SELECT count(*) FROM music_drop WHERE " +
+          "(6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) <= :radius and type = :type",
+          nativeQuery = true)
+  int countByLatBetweenAndLngBetweenAndType(@Param("lat") float lat,
+                                            @Param("lng") float lng,
+                                            @Param("radius") float radius,
+                                            @Param("type") int type);
+
+
   void deleteById(long id);
+
   List<MusicDrop> findByUserId(Long userId);
+
   @Modifying
   @Query("update MusicDrop p set p.views = p.views + 1 where p.id = :id")
-  int updateViews(@Param("id")Long id);
+  int updateViews(@Param("id") Long id);
 
 
   @Modifying

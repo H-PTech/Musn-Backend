@@ -21,18 +21,22 @@ public class DropService {
 
   private final DropRepository dropRepository;
   private final DropLikeRepository dropLikeRepository;
+
   public List<MusicDrop> findAll(){
     return dropRepository.findAll();
   };
   public List<MusicDrop> findByUserId(Long userId){return dropRepository.findByUserId(userId);};
-  public List<MusicDrop> getDropList(float swLat, float neLat, float swLng, float neLng) {
-    return dropRepository.findAllByLatBetweenAndLngBetween(swLat, neLat, swLng, neLng);
+  public List<MusicDrop> getDropList(float lat, float lng, float radius) {
+    return dropRepository.findAllWithinRadius(lat, lng, radius);
+  }
+  public List<MusicDrop> getDropListByType(float lat, float lng, float radius, int type){
+    return dropRepository.findAllWithinRadiusByType(lat, lng, radius, type);
   }
 
-  public List<MusicDrop> getDropListByDistance(float swLat, float neLat, float swLng, float neLng, float userLat, float userLng){
-    List<MusicDrop> list = getDropList(swLat, neLat, swLng, neLng);
+  public List<MusicDrop> getDropListByDistance(float lat, float lng, float radius){
+    List<MusicDrop> list = getDropList(lat, lng, radius);
     // 맨하튼 거리 기준 정렬
-    list.sort(Comparator.comparingDouble(p -> manhattanDistance(userLat, userLng, p.getLat(), p.getLng())));
+    list.sort(Comparator.comparingDouble(p -> manhattanDistance(lat, lng, p.getLat(), p.getLng())));
     return list;
   }
 
@@ -41,14 +45,14 @@ public class DropService {
     return Math.abs(userLat - targetLat) + Math.abs(userLng - targetLng);
   }
 
-  public int getDropCount(float swLat, float neLat, float swLng, float neLng) {
-    return dropRepository.countByLatBetweenAndLngBetween(swLat, neLat, swLng, neLng);
+  public int getDropCount(float lat, float lng, float radius) {
+    return dropRepository.countByLatBetweenAndLngBetween(lat, lng, radius);
   }
 
-  public MusicAndVideoCount getMusicAndVideoCount(float swLat, float neLat, float swLng, float neLng) {
+  public MusicAndVideoCount getMusicAndVideoCount(float lat, float lng, float radius) {
     MusicAndVideoCount temp = new MusicAndVideoCount();
-    int mCount = dropRepository.countByLatBetweenAndLngBetweenAndType(swLat, neLat, swLng, neLng, 1);
-    int vCount = dropRepository.countByLatBetweenAndLngBetweenAndType(swLat, neLat, swLng, neLng, 2);
+    int mCount = dropRepository.countByLatBetweenAndLngBetweenAndType(lat, lng, radius, 1);
+    int vCount = dropRepository.countByLatBetweenAndLngBetweenAndType(lat, lng, radius, 2);
     temp.setMusicCount(mCount);
     temp.setVideoCount(vCount);
     return temp;
