@@ -15,7 +15,7 @@ public interface DropRepository extends JpaRepository<MusicDrop, Long> {
   int countByLatBetweenAndLngBetween(float swLat, float neLat, float swLng, float neLng);
   int countByLatBetweenAndLngBetweenAndType(float swLat, float neLat, float swLng, float neLng,int type);
   void deleteById(long id);
-
+  List<MusicDrop> findByUserId(Long userId);
   @Modifying
   @Query("update MusicDrop p set p.views = p.views + 1 where p.id = :id")
   int updateViews(@Param("id")Long id);
@@ -28,5 +28,6 @@ public interface DropRepository extends JpaRepository<MusicDrop, Long> {
   @Modifying
   @Query("UPDATE MusicDrop m SET m.likeCount = m.likeCount - 1 WHERE m.id = :id")
   int decrementLike(@Param("id") Long id);
+
 
 }

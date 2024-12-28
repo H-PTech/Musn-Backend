@@ -24,6 +24,7 @@ public class DropService {
   public List<MusicDrop> findAll(){
     return dropRepository.findAll();
   };
+  public List<MusicDrop> findByUserId(Long userId){return dropRepository.findByUserId(userId);};
   public List<MusicDrop> getDropList(float swLat, float neLat, float swLng, float neLng) {
     return dropRepository.findAllByLatBetweenAndLngBetween(swLat, neLat, swLng, neLng);
   }

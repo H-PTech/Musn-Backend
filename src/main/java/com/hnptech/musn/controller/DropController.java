@@ -1,10 +1,12 @@
 package com.hnptech.musn.controller;
 
+import com.hnptech.musn.config.CustomUserDetails;
 import com.hnptech.musn.entity.MusicDrop;
 import com.hnptech.musn.entity.dto.MusicAndVideoCount;
 import com.hnptech.musn.service.DropService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -87,6 +89,13 @@ public class DropController {
     return ResponseEntity.ok(result);
   }
 
+  // 특정 작성자 드랍 조회
+  @GetMapping("/user/{userId}")
+  public ResponseEntity<?> getDropListByUserId(@PathVariable(value = "userId") long userId) {
+    List<MusicDrop> result = dropService.findByUserId(userId);
+    return ResponseEntity.ok(null);
+  }
+
   // 드랍 등록
   @PostMapping()
   public ResponseEntity<?> addDrop(@RequestBody MusicDrop drop) {
@@ -118,9 +127,9 @@ public class DropController {
 
   // 드랍 좋아요
   @PostMapping("/{dropId}/like")
-  public ResponseEntity<?> addLike(@PathVariable long dropId) {
+  public ResponseEntity<?> addLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
     // user id 가져오기
-    long userId = 1;
+    long userId = customUserDetails.getUser().getId();
     dropService.insertLike(userId, dropId);
     return ResponseEntity.ok("success");
   }
