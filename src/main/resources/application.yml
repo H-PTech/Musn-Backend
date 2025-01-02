@@ -71,8 +71,3 @@ jwt:
     secret-key: ${JWT_SECRET_KEY}
     access-expire-time: ${JWT_ACCESS_EXPIRE_TIME}
     refresh-expire-time: ${JWT_REFRESH_EXPIRE_TIME}
-
-social:
-  provider:
-    kakao:
-      app-id: ${KAKAO_APP_ID}
