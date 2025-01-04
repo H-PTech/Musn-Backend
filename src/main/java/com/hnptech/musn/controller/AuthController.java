@@ -16,4 +16,15 @@ public class AuthController {
                                  @RequestHeader("Authorization") String socialAccessToken) {
     return ResponseEntity.ok(authService.login(provider, socialAccessToken));
   }
+
+  @PostMapping("/refresh")
+  public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String refreshToken) {
+    return ResponseEntity.ok(authService.refresh(refreshToken));
+  }
+
+  @GetMapping("/validate")
+  public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+    authService.validate(token);
+    return ResponseEntity.ok().build();
+  }
 }

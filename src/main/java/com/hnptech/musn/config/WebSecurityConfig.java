@@ -46,7 +46,7 @@ public class WebSecurityConfig {
         .httpBasic(HttpBasicConfigurer::disable)
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(request -> request
-            .requestMatchers("v1/auth/login/**", "/v1/users/**", "/v1/drop/**", "v1/files/**").permitAll() // 인증없이 허용 주소
+            .requestMatchers("v1/auth/**", "/v1/users/**", "/v1/drop/**", "v1/files/**").permitAll() // 인증없이 허용 주소
             .anyRequest()
             .authenticated())
 //        .authorizeHttpRequests(authorize -> authorize

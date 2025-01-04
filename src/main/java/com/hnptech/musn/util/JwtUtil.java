@@ -91,8 +91,8 @@ public class JwtUtil {
         .getBody();
   }
 
-  public int getId(String token) {
-    return Integer.parseInt(parseClaims(token).getSubject());
+  public Long getId(String token) {
+    return Long.parseLong(parseClaims(token).getSubject());
   }
 
   public void saveRefreshToken(String userId, String refreshToken) {
