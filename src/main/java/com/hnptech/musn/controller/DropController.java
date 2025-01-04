@@ -1,6 +1,7 @@
 package com.hnptech.musn.controller;
 
 import com.hnptech.musn.config.CustomUserDetails;
+import com.hnptech.musn.config.S3Service;
 import com.hnptech.musn.entity.MusicDrop;
 import com.hnptech.musn.entity.dto.MusicAndVideoCount;
 import com.hnptech.musn.service.DropService;
@@ -9,7 +10,9 @@ import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +22,12 @@ import java.util.Optional;
 public class DropController {
 
   private final DropService dropService;
+  private final S3Service s3Service;
 
   @GetMapping("/test")
   public void test() {
     MusicDrop drop = new MusicDrop();
-    drop.setCode("ss");
+//    dro("ss");
     float lat = 37.5755F;
     float lng = 126.9780F;
     drop.setLng(lng);
@@ -66,6 +70,7 @@ public class DropController {
     // 음악 drop만 리턴
     return ResponseEntity.ok(dropService.getDropListByType(lat, lng, radius, 1));
   }
+
   @GetMapping("/video")
   public ResponseEntity<?> getDropVideo(@RequestParam(defaultValue = "37.5") Float lat,
                                         @RequestParam(defaultValue = "126.95") Float lng,
@@ -125,8 +130,30 @@ public class DropController {
   }
 
   // 드랍 등록
+  // 파일 업로드를 받는 경우는 타입이 2일 경우
+  // 타입이 2일 경우 영상의 썸네일과 영상을 멀티파트파일로 받음.
   @PostMapping()
-  public ResponseEntity<?> addDrop(@RequestBody MusicDrop drop) {
+  public ResponseEntity<?> addDrop(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                   @RequestParam("video") MultipartFile file1,
+                                   @RequestParam("thumbnailImage") MultipartFile file2,
+                                   @RequestBody MusicDrop drop) {
+    long userId = customUserDetails.getUser().getId();
+    drop.setUserId(userId);
+
+    if (drop.getType() == 2 && !file1.isEmpty()) { // 타입과 파일 여부 검사 후 s3 업로드
+      try {
+        drop.setVideo(s3Service.uploadFile(file1));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    if (drop.getType() == 2 && !file2.isEmpty()) {
+      try {
+        drop.setThumbnailImage(s3Service.uploadFile(file2));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
     dropService.save(drop);
     return ResponseEntity.ok("success");
   }

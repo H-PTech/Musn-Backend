@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${SPRING_DATASOURCE_URL}
@@ -71,3 +76,13 @@ jwt:
     secret-key: ${JWT_SECRET_KEY}
     access-expire-time: ${JWT_ACCESS_EXPIRE_TIME}
     refresh-expire-time: ${JWT_REFRESH_EXPIRE_TIME}
+
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET}
+  stack:
+    auto: false
+  credentials:
+    access-key: ${AWS_S3_ACCESS}
+    secret-key: ${AWS_S3_SECRET}
+    region: ${AWS_S3_REGION}

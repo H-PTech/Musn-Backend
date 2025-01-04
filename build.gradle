@@ -35,6 +35,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
+
+    implementation group: 'software.amazon.awssdk', name: 's3', version: '2.29.44'
+    implementation group: 'software.amazon.awssdk', name: 'sts', version: '2.29.44'
+
 }
 
 tasks.named('test') {

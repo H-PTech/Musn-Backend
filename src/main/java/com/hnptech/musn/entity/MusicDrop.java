@@ -14,6 +14,9 @@ public class MusicDrop extends BaseEntity {
   private Long id;
 
   @Column(nullable = false)
+  private String title;
+
+  @Column(nullable = false)
   private String content;
 
   @Column(nullable = false)
@@ -38,15 +41,20 @@ public class MusicDrop extends BaseEntity {
   private int type;
 
   // music : type - 1
-  @Column(nullable = true)
-  private String code;
+  @Column
+  private String thumbnailUrl;
 
-  @Column(nullable = true)
-  private String title;
+  @Column
+  private String musicTitle;
+
+  @Column
+  private String artist;
 
   // video : type - 2
-  @Column(nullable = true)
-  private String url;
+  @Column
+  private String video;
 
+  @Column
+  private String thumbnailImage;
 
 }
