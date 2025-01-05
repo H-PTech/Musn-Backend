@@ -5,6 +5,7 @@ import com.hnptech.musn.config.S3Service;
 import com.hnptech.musn.entity.MusicDrop;
 import com.hnptech.musn.entity.dto.MusicAndVideoCount;
 import com.hnptech.musn.service.DropService;
+import com.hnptech.musn.util.ApiResult;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.http.ResponseEntity;
@@ -24,119 +25,98 @@ public class DropController {
   private final DropService dropService;
   private final S3Service s3Service;
 
-  @GetMapping("/test")
-  public void test() {
-    MusicDrop drop = new MusicDrop();
-//    dro("ss");
-    float lat = 37.5755F;
-    float lng = 126.9780F;
-    drop.setLng(lng);
-    drop.setLat(lat);
-    drop.setContent("ss");
-    drop.setUserId(1L);
-    drop.setViews(0);
-    drop.setLikeCount(0);
-    drop.setType(1);
-    dropService.save(drop);
-
-    lat = 37.5575F;
-    lng = 126.9780F;
-    drop.setLng(lng);
-    drop.setLat(lat);
-    dropService.save(drop);
-
-    lat = 37.5665F;
-    lng = 126.9885F;
-    drop.setLng(lng);
-    drop.setLat(lat);
-    dropService.save(drop);
-
-    lat = 37.5665F;
-    lng = 126.9675F;
-    drop.setLng(lng);
-    drop.setLat(lat);
-    dropService.save(drop);
-  }
-
-  @GetMapping("test1")
-  public ResponseEntity<?> test1() {
-    return ResponseEntity.ok(dropService.findAll());
-  }
-
   @GetMapping("/music")
-  public ResponseEntity<?> getDropMusic(@RequestParam(defaultValue = "37.5") Float lat,
-                                        @RequestParam(defaultValue = "126.95") Float lng,
-                                        @RequestParam(defaultValue = "1.0") Float radius) {
-    // 음악 drop만 리턴
-    return ResponseEntity.ok(dropService.getDropListByType(lat, lng, radius, 1));
+  public ResponseEntity<ApiResult<List<MusicDrop>>> getDropMusic(@RequestParam(defaultValue = "37.5") Float lat,
+                                                                 @RequestParam(defaultValue = "126.95") Float lng,
+                                                                 @RequestParam(defaultValue = "1.0") Float radius) {
+    List<MusicDrop> result = dropService.getDropListByType(lat, lng, radius, 1);
+    return ResponseEntity.ok(ApiResult.<List<MusicDrop>>builder()
+            .message("반경 내 음악 리스트 반환, 반경 : " + radius + "km")
+            .data(result)
+            .build());
   }
 
   @GetMapping("/video")
-  public ResponseEntity<?> getDropVideo(@RequestParam(defaultValue = "37.5") Float lat,
-                                        @RequestParam(defaultValue = "126.95") Float lng,
-                                        @RequestParam(defaultValue = "1.0") Float radius) {
-    // 영상 drop만 리턴
-    return ResponseEntity.ok(dropService.getDropListByType(lat, lng, radius, 2));
+  public ResponseEntity<ApiResult<List<MusicDrop>>> getDropVideo(@RequestParam(defaultValue = "37.5") Float lat,
+                                                                 @RequestParam(defaultValue = "126.95") Float lng,
+                                                                 @RequestParam(defaultValue = "1.0") Float radius) {
+    List<MusicDrop> result = dropService.getDropListByType(lat, lng, radius, 2);
+    return ResponseEntity.ok(ApiResult.<List<MusicDrop>>builder()
+            .message("반경 내 영상 리스트 반환, 반경 : " + radius + "km")
+            .data(result)
+            .build());
   }
 
   @GetMapping
-  public ResponseEntity<?> getDropList(
+  public ResponseEntity<ApiResult<List<MusicDrop>>> getDropList(
           @RequestParam(defaultValue = "37.5665") Float lat,
           @RequestParam(defaultValue = "126.9780") Float lng,
           @RequestParam(defaultValue = "1.0") Float radius) { // 반경 기본값: 1km
-    System.out.println("lat: " + lat);
-    System.out.println("lng: " + lng);
-    System.out.println("radius: " + radius);
-    List<MusicDrop> drops = dropService.getDropList(lat, lng, radius);
-    return ResponseEntity.ok(drops);
+    List<MusicDrop> result = dropService.getDropList(lat, lng, radius);
+    return ResponseEntity.ok(ApiResult.<List<MusicDrop>>builder()
+            .message("반경 내 음악&영상 반환, 반경 : " + radius + "km")
+            .data(result)
+            .build());
   }
 
 
   //지도 범위 내 드랍 조회(거리 순)
-  @GetMapping("/{userLat}/{userLng}")
-  public ResponseEntity<?> getDropListByDistance(
+  @GetMapping("/sort")
+  public ResponseEntity<ApiResult<List<MusicDrop>>> getDropListByDistance(
           @RequestParam(defaultValue = "37.5") Float lat,
           @RequestParam(defaultValue = "126.95") Float lng,
           @RequestParam(defaultValue = "1.0") Float radius) {
-    List<MusicDrop> drops = dropService.getDropListByDistance(lat, lng, radius);
-    return ResponseEntity.ok(drops);
+    List<MusicDrop> result = dropService.getDropListByDistance(lat, lng, radius);
+    return ResponseEntity.ok(ApiResult.<List<MusicDrop>>builder()
+            .message("반경 내 음악&영상 반환(거리순), 반경 : " + radius + "km")
+            .data(result)
+            .build());
   }
 
   // 지도 범위 내 드랍 총 개수 조회
   @GetMapping("/count/all")
-  public ResponseEntity<?> getDropListCount(
+  public ResponseEntity<ApiResult<Integer>> getDropListCount(
           @RequestParam(defaultValue = "37.5") Float lat,
           @RequestParam(defaultValue = "126.95") Float lng,
           @RequestParam(defaultValue = "1.0") Float radius) {
-    int count = dropService.getDropCount(lat, lng, radius);
-    return ResponseEntity.ok(count);
+    int result = dropService.getDropCount(lat, lng, radius);
+    return ResponseEntity.ok(ApiResult.<Integer>builder()
+            .message("지도 범위 내 드랍 총 개수 조회")
+            .data(result)
+            .build());
   }
 
   // 지도 범위 내 뮤직&비디오 개수 조회
   @GetMapping("/count")
-  public ResponseEntity<?> getMusicAndVideoCount(
+  public ResponseEntity<ApiResult<MusicAndVideoCount>> getMusicAndVideoCount(
           @RequestParam(defaultValue = "37.5") Float lat,
           @RequestParam(defaultValue = "126.95") Float lng,
           @RequestParam(defaultValue = "1.0") Float radius) {
     MusicAndVideoCount result = dropService.getMusicAndVideoCount(lat, lng, radius);
-    return ResponseEntity.ok(result);
+    return ResponseEntity.ok(ApiResult.<MusicAndVideoCount>builder()
+            .message("지도 범위 내 드랍 총 개수 조회")
+            .data(result)
+            .build());
   }
 
   // 특정 작성자 드랍 조회
   @GetMapping("/user/{userId}")
-  public ResponseEntity<?> getDropListByUserId(@PathVariable(value = "userId") long userId) {
+  public ResponseEntity<ApiResult<List<MusicDrop>>> getDropListByUserId(@PathVariable(value = "userId") long userId) {
     List<MusicDrop> result = dropService.findByUserId(userId);
-    return ResponseEntity.ok(null);
+    return ResponseEntity.ok(ApiResult.<List<MusicDrop>>builder()
+            .message("지도 범위 내 드랍 총 개수 조회")
+            .data(result)
+            .build());
   }
 
   // 드랍 등록
   // 파일 업로드를 받는 경우는 타입이 2일 경우
   // 타입이 2일 경우 영상의 썸네일과 영상을 멀티파트파일로 받음.
   @PostMapping()
-  public ResponseEntity<?> addDrop(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                   @RequestParam("video") MultipartFile file1,
-                                   @RequestParam("thumbnailImage") MultipartFile file2,
-                                   @RequestBody MusicDrop drop) {
+  public ResponseEntity<ApiResult<Object>> addDrop(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                   @RequestParam("video") MultipartFile file1,
+                                                   @RequestParam("thumbnailImage") MultipartFile file2,
+                                                   @RequestBody MusicDrop drop) {
     long userId = customUserDetails.getUser().getId();
     drop.setUserId(userId);
 
@@ -155,14 +135,20 @@ public class DropController {
       }
     }
     dropService.save(drop);
-    return ResponseEntity.ok("success");
+    return ResponseEntity.ok(ApiResult.<Object>builder()
+            .message("드랍이 성공적으로 등록되었습니다.")
+            .data(null)
+            .build());
   }
 
   // 드랍 내용 수정
   @PatchMapping()
-  public ResponseEntity<?> updateDrop(@RequestBody MusicDrop drop) {
+  public ResponseEntity<ApiResult<Object>> updateDrop(@RequestBody MusicDrop drop) {
     dropService.save(drop);
-    return ResponseEntity.ok("success");
+    return ResponseEntity.ok(ApiResult.<Object>builder()
+            .message("드랍이 성공적으로 수정되었습니다.")
+            .data(null)
+            .build());
   }
 
   // 드랍 삭제
@@ -175,27 +161,35 @@ public class DropController {
 
   // 드랍 상세 조회
   @GetMapping("/{id}")
-  public ResponseEntity<?> getDropById(@PathVariable long id) {
-    Optional<MusicDrop> drop = dropService.findById(id);
-    return ResponseEntity.ok(drop.get());
+  public ResponseEntity<ApiResult<MusicDrop>>  getDropById(@PathVariable long id) {
+    MusicDrop result = (MusicDrop)dropService.findById(id).get();
+    return ResponseEntity.ok(ApiResult.<MusicDrop>builder()
+            .message("드랍 상세 조회입니다.")
+            .data(result)
+            .build());
   }
 
+  // TODO : 드랍을 조회할 때 user가 좋아요를 누른 게시글인지에 대한 여부는 구현 되어있지 않음
   // 드랍 좋아요
   @PostMapping("/{dropId}/like")
-  public ResponseEntity<?> addLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
+  public ResponseEntity<ApiResult<Object>> addLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
     // user id 가져오기
     long userId = customUserDetails.getUser().getId();
     dropService.insertLike(userId, dropId);
-    return ResponseEntity.ok("success");
+    return ResponseEntity.ok(ApiResult.<Object>builder()
+            .message("success")
+            .data(null)
+            .build());
   }
 
   // 드랍 좋아요 취소
   @DeleteMapping("/{dropId}/like")
-  public ResponseEntity<?> deleteLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
+  public ResponseEntity<ApiResult<Object>> deleteLike(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long dropId) {
     long userId = customUserDetails.getUser().getId();
     dropService.deleteLike(userId, dropId);
-    return ResponseEntity.ok("success");
+    return ResponseEntity.ok(ApiResult.<Object>builder()
+            .message("success")
+            .data(null)
+            .build());
   }
-
-
 }
